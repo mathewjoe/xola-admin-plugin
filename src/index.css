@@ -1,0 +1,11 @@
+body {
+    margin: 0;
+    min-width: 350px;
+    padding: 30px 15px;
+    font-family: sans-serif;
+}
+
+.env-config-list .tile {
+    margin: .7rem;
+    max-width: 180px;
+}
