@@ -4,6 +4,7 @@ import _bindAll from 'lodash/bindAll';
 import $ from 'jquery';
 import 'spectre.css/docs/dist/spectre.min.css';
 import React, {Component} from 'react';
+import {Link} from 'react-router-dom';
 import {SellerTileCollection} from "./sellerTile";
 import {SellerSearchContainer} from "./search";
 
@@ -17,7 +18,7 @@ const DEFAULT_ENVIRONMENTS = [{
    apiKey: ''
 }];
 
-class App extends Component {
+class SearchPage extends Component {
    constructor(props) {
       super(props);
       const environments = DEFAULT_ENVIRONMENTS;
@@ -66,6 +67,7 @@ class App extends Component {
    render() {
       return (
           <div className="container">
+             <Link to="/configuration">Configuration</Link>
              <SellerSearchContainer onEnvChange={this.handleEnvChange}
                                     onSearchTextChange={this.handleSearchTextChange}
                                     selectedEnv={this.state.selectedEnv}
@@ -78,4 +80,4 @@ class App extends Component {
    }
 }
 
-export default App;
+export {SearchPage};

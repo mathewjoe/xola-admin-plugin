@@ -1,6 +1,7 @@
 /*global chrome*/
 import 'spectre.css/dist/spectre-icons.min.css';
 import React, {Component} from 'react';
+import {Link} from 'react-router-dom';
 
 class EnvironmentConfig extends Component {
    render() {
@@ -67,7 +68,8 @@ class AddEnvironmentConfig extends Component {
       );
    }
 
-   handleSubmit() {
+   handleSubmit(e) {
+      e.preventDefault();
       if (this.state.env.name && this.state.env.domain && this.state.env.apiKey) {
          this.props.onAddConfig(this.state.env);
          this.setState({env: {name: '', domain: '', apiKey: ''}});
@@ -81,7 +83,7 @@ class AddEnvironmentConfig extends Component {
    }
 }
 
-class OptionsPage extends Component {
+class ConfigurationPage extends Component {
    constructor(props) {
       super(props);
       this.handleAddConfig = this.handleAddConfig.bind(this);
@@ -114,6 +116,7 @@ class OptionsPage extends Component {
    render() {
       return (
           <div>
+             <Link to="/">Search</Link>
              <EnvironmentConfigList environments={this.state.environments} onDeleteConfig={this.handleDeleteConfig}/>
              <div className="divider"></div>
              <AddEnvironmentConfig onAddConfig={this.handleAddConfig}/>
@@ -131,4 +134,4 @@ function getOptions(callback) {
    chrome.storage.sync.get({environments: []}, data => callback(data));
 }
 
-export {OptionsPage};
+export {ConfigurationPage};
