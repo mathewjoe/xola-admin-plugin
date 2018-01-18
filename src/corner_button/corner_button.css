@@ -1,0 +1,25 @@
+.corner {
+    position: absolute;
+    top: 0;
+    right: 0;
+    width: 4em;
+    height: 4em;
+}
+
+.corner i {
+    color: #fff;
+    position: relative;
+    top: 0.5em;
+    left: 2.25em;
+}
+
+.corner:after {
+    position: absolute;
+    content: "";
+    top: 0;
+    right: 0;
+    border-right: 4em solid transparent;
+    border-bottom: 4em solid transparent;
+    border-right-color: #5755d9;
+    z-index: -1;
+}

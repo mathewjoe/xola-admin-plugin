@@ -1,6 +1,6 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
-import {SearchPage} from './index';
+import {SearchPage} from './search_page';
 
 it('renders without crashing', () => {
   const div = document.createElement('div');

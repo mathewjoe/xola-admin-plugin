@@ -2,11 +2,12 @@
 import _debounce from 'lodash/debounce';
 import _bindAll from 'lodash/bindAll';
 import $ from 'jquery';
-import 'spectre.css/docs/dist/spectre.min.css';
+import './search_page.css';
 import React, {Component} from 'react';
 import {Link} from 'react-router-dom';
-import {SellerTileCollection} from "./sellerTile";
-import {SellerSearchContainer} from "./search";
+import {SellerTileCollection} from "./seller_tile";
+import {SellerSearchContainer} from "./search_input";
+import CornerButton from "../corner_button/corner_button";
 
 const DEFAULT_ENVIRONMENTS = [{
    name: 'local',
@@ -67,12 +68,13 @@ class SearchPage extends Component {
    render() {
       return (
           <div className="container">
-             <Link to="/configuration">Configuration</Link>
+             <Link to="/configuration">
+                <CornerButton buttonClass="go-to-settings" iconClass="cog" />
+             </Link>
              <SellerSearchContainer onEnvChange={this.handleEnvChange}
                                     onSearchTextChange={this.handleSearchTextChange}
                                     selectedEnv={this.state.selectedEnv}
                                     environments={this.state.environments}/>
-             <hr/>
              <SellerTileCollection selectedEnv={this.state.selectedEnv}
                                    sellers={this.state.sellers}/>
           </div>

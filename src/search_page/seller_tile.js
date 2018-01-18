@@ -1,13 +1,13 @@
-import './sellerTile.css';
+import './seller_tile.css';
 import React, {Component} from 'react';
 
 class SellerTile extends Component {
    render() {
       return (
-          <a href={`http://${this.props.selectedEnv.domain}/seller#seller=${this.props.seller.id}#apiKey=${this.props.selectedEnv.apiKey}`} target="_blank">
+          <a href={`${this.props.selectedEnv.domain}/seller#seller=${this.props.seller.id}#apiKey=${this.props.selectedEnv.apiKey}`} target="_blank">
              <div className="tile tile-centered">
                 <div className="tile-icon">
-                   <img src={`http://${this.props.selectedEnv.domain}/api/users/${this.props.seller.id}/picture?size=small`}
+                   <img src={`${this.props.selectedEnv.domain}/api/users/${this.props.seller.id}/picture?size=small`}
                         className="avatar avatar-sm"
                         alt={this.props.seller.name}/>
                 </div>
