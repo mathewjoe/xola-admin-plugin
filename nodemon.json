@@ -1,0 +1,8 @@
+{
+  "ext": "js, css",
+  "ignore": ["build/"],
+  "events": {
+    "crash": "notify-send Xola-Mods 'Build Error!' -t 2000",
+    "exit": "notify-send Xola-Mods 'Build Complete!' -t 5000"
+  }
+}

@@ -3,6 +3,7 @@ import 'spectre.css/dist/spectre-icons.min.css';
 import React, {Component} from 'react';
 import {Link} from 'react-router-dom';
 import CornerButton from '../corner_button/corner_button';
+import Icon from "../icon";
 
 class EnvironmentConfig extends Component {
    render() {
@@ -14,7 +15,7 @@ class EnvironmentConfig extends Component {
              </div>
              <div className="tile-action">
                 <button className="btn btn-link" onClick={() => this.props.onDeleteConfig()}>
-                   <i className="fas fa-trash"></i>
+                   <Icon name="trash"/>
                 </button>
              </div>
           </div>
@@ -118,7 +119,7 @@ class ConfigurationPage extends Component {
       return (
           <div>
              <Link to="/">
-                <CornerButton iconClass="arrow-left"/>
+                <CornerButton icon="arrow-left"/>
              </Link>
              <EnvironmentConfigList environments={this.state.environments} onDeleteConfig={this.handleDeleteConfig}/>
              <div className="divider"></div>

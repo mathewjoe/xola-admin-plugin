@@ -8,6 +8,7 @@ import {Link} from 'react-router-dom';
 import {SellerTileCollection} from "./seller_tile";
 import {SellerSearchContainer} from "./search_input";
 import CornerButton from "../corner_button/corner_button";
+import EmptyConfigurations from "./empty_configurations";
 
 const DEFAULT_ENVIRONMENTS = [{
    name: 'local',
@@ -66,17 +67,22 @@ class SearchPage extends Component {
    }
 
    render() {
-      return (
+      const searchSection = (
           <div className="container">
-             <Link to="/configuration">
-                <CornerButton buttonClass="go-to-settings" iconClass="cog" />
-             </Link>
              <SellerSearchContainer onEnvChange={this.handleEnvChange}
                                     onSearchTextChange={this.handleSearchTextChange}
                                     selectedEnv={this.state.selectedEnv}
                                     environments={this.state.environments}/>
              <SellerTileCollection selectedEnv={this.state.selectedEnv}
                                    sellers={this.state.sellers}/>
+          </div>
+      );
+      return (
+          <div className="container">
+             <Link to="/configuration">
+                <CornerButton buttonClass="go-to-settings" icon="cog" />
+             </Link>
+             {this.state.environments.length ? searchSection : <EmptyConfigurations/>}
           </div>
       );
    }
