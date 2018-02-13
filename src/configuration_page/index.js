@@ -40,23 +40,37 @@ class EnvironmentConfigList extends Component {
    }
 }
 
+const PROTOCOL = {HTTP: 'http://', HTTPS: 'https://'};
+
 class AddEnvironmentConfig extends Component {
    constructor(props) {
       super(props);
-      this.handleSubmit = this.handleSubmit.bind(this);
-      this.handleInputChange = this.handleInputChange.bind(this);
-      this.state = {env: {name: '', domain: '', apiKey: ''}};
+      this.state = {
+         env: {
+            name: '',
+            protocol: PROTOCOL.HTTPS,
+            domain: '', apiKey: '',
+            get url() {
+               return this.protocol + this.domain;
+            }
+         },
+         loading: false
+      };
    }
 
    render() {
       return (
           <form className="form-horizontal">
              <div className="form-group">
-                <input className="form-input" type="text" placeholder="Name" name="name" value={this.state.env.name}
+                <input className="form-input" type="text" placeholder="Name (eg: production)" name="name"
+                       value={this.state.env.name}
                        onChange={this.handleInputChange}/>
              </div>
-             <div className="form-group">
-                <input className="form-input" type="text" placeholder="Domain" name="domain"
+             <div className="form-group input-group">
+                <select className="form-select" value={this.state.env.protocol}>
+                   {Object.keys(PROTOCOL).map(key => <option value={PROTOCOL[key]}>{PROTOCOL[key]}</option>)}
+                </select>
+                <input className="form-input" type="text" placeholder="Domain (eg: xola.com)" name="domain"
                        value={this.state.env.domain} onChange={this.handleInputChange}/>
              </div>
              <div className="form-group">
@@ -64,25 +78,29 @@ class AddEnvironmentConfig extends Component {
                        value={this.state.env.apiKey} onChange={this.handleInputChange}/>
              </div>
              <div className="form-group">
-                <button className="btn btn-block" onClick={this.handleSubmit}>Add New Environment</button>
+                <button className={"btn btn-block" + (this.state.loading ? " loading" : "")}
+                        onClick={this.handleSubmit}>
+                   Add New Environment
+                </button>
              </div>
           </form>
       );
    }
 
-   handleSubmit(e) {
+   handleSubmit = (e) => {
       e.preventDefault();
       if (this.state.env.name && this.state.env.domain && this.state.env.apiKey) {
-         this.props.onAddConfig(this.state.env);
+         this.setState({loading: true});
+         this.props.onAddConfig({name: this.state.env.name, domain: this.state.env.url, apiKey: this.state.env.apiKey});
          this.setState({env: {name: '', domain: '', apiKey: ''}});
       }
-   }
+   };
 
-   handleInputChange(e) {
+   handleInputChange = (e) => {
       const env = Object.assign(this.state.env);
       env[e.target.getAttribute('name')] = e.target.value;
       this.setState({env});
-   }
+   };
 }
 
 class ConfigurationPage extends Component {
