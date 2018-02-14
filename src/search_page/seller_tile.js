@@ -4,10 +4,10 @@ import React, {Component} from 'react';
 class SellerTile extends Component {
    render() {
       return (
-          <a href={`${this.props.selectedEnv.domain}/seller#seller=${this.props.seller.id}#apiKey=${this.props.selectedEnv.apiKey}`} target="_blank">
+          <a href={`${this.props.selectedEnv.baseUrl}/seller#seller=${this.props.seller.id}#apiKey=${this.props.selectedEnv.apiKey}`} target="_blank">
              <div className="tile tile-centered">
                 <div className="tile-icon">
-                   <img src={`${this.props.selectedEnv.domain}/api/users/${this.props.seller.id}/picture?size=small`}
+                   <img src={`${this.props.selectedEnv.baseUrl}/api/users/${this.props.seller.id}/picture?size=small`}
                         className="avatar avatar-sm"
                         alt={this.props.seller.name}/>
                 </div>
@@ -21,7 +21,7 @@ class SellerTile extends Component {
    }
 }
 
-class SellerTileCollection extends Component {
+class SellerTileList extends Component {
    renderSeller(seller) {
       return <SellerTile selectedEnv={this.props.selectedEnv} seller={seller} key={seller.id}/>
    }
@@ -39,4 +39,4 @@ class SellerTileCollection extends Component {
    }
 }
 
-export { SellerTileCollection };
+export { SellerTileList };

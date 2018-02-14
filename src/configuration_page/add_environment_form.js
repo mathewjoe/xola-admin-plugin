@@ -1,49 +1,9 @@
-/*global chrome*/
-import $ from 'jquery';
-import 'spectre.css/dist/spectre-icons.min.css';
-import React, {Component} from 'react';
-import {Link} from 'react-router-dom';
-import CornerButton from '../corner_button/corner_button';
-import Icon from "../icon";
-
-class EnvironmentConfig extends Component {
-   render() {
-      return (
-          <div className="tile tile-centered">
-             <div className="tile-content">
-                <div className="tile-title">{this.props.env.name}</div>
-                <div className="tile-subtitle text-gray">{this.props.env.domain}</div>
-             </div>
-             <div className="tile-action">
-                <button className="btn btn-link" onClick={() => this.props.onDeleteConfig()}>
-                   <Icon name="trash"/>
-                </button>
-             </div>
-          </div>
-      );
-   }
-}
-
-class EnvironmentConfigList extends Component {
-   render() {
-      return (
-          <div className="env-config-list">
-             <h4>Environments</h4>
-             {this.renderConfigurations()}
-          </div>
-      );
-   }
-
-   renderConfigurations() {
-      return this.props.environments.map((env, idx) => (
-          <EnvironmentConfig env={env} key={idx} onDeleteConfig={() => this.props.onDeleteConfig(idx)}/>
-      ));
-   }
-}
+import $ from "jquery";
+import React, {Component} from "react";
 
 const PROTOCOL = {HTTPS: 'https://', HTTP: 'http://'};
 
-class AddEnvironmentConfig extends Component {
+class AddEnvironmentForm extends Component {
    constructor(props) {
       super(props);
       this.state = this.getDefaultState();
@@ -58,7 +18,7 @@ class AddEnvironmentConfig extends Component {
             apiKey: '',
             email: '',
             password: '',
-            get url() {
+            get baseUrl() {
                return this.protocol + this.domain;
             }
          },
@@ -116,11 +76,13 @@ class AddEnvironmentConfig extends Component {
              </div>
              <div className="form-group">
                 <label className="form-radio">
-                   <input type="radio" name="useApiKey" checked={!this.state.useApiKey} onChange={() => this.setState({useApiKey: false})}/>
+                   <input type="radio" name="useApiKey" checked={!this.state.useApiKey}
+                          onChange={() => this.setState({useApiKey: false})}/>
                    <i className="form-icon"></i> Email & Password
                 </label>
                 <label className="form-radio">
-                   <input type="radio" name="useApiKey" checked={this.state.useApiKey} onChange={() => this.setState({useApiKey: true})}/>
+                   <input type="radio" name="useApiKey" checked={this.state.useApiKey}
+                          onChange={() => this.setState({useApiKey: true})}/>
                    <i className="form-icon"></i> API Key
                 </label>
              </div>
@@ -144,7 +106,7 @@ class AddEnvironmentConfig extends Component {
       }
 
       return $.ajax({
-         url: `${env.url}/api/users/me`,
+         url: `${env.baseUrl}/api/users/me`,
          headers
       });
    }
@@ -157,7 +119,7 @@ class AddEnvironmentConfig extends Component {
              .then((resp) => {
                 this.props.onAddConfig({
                    name: this.state.env.name,
-                   domain: this.state.env.url,
+                   baseUrl: this.state.env.baseUrl,
                    apiKey: resp.apiKey
                 });
                 this.setState(this.getDefaultState());
@@ -175,57 +137,4 @@ class AddEnvironmentConfig extends Component {
    };
 }
 
-class ConfigurationPage extends Component {
-   constructor(props) {
-      super(props);
-      this.handleAddConfig = this.handleAddConfig.bind(this);
-      this.handleDeleteConfig = this.handleDeleteConfig.bind(this);
-      this.onLoad = this.onLoad.bind(this);
-      this.state = {
-         environments: []
-      };
-      getOptions(this.onLoad);
-   }
-
-   handleAddConfig(newConfig) {
-      const environments = Object.assign(this.state.environments);
-      environments.push(newConfig);
-      this.setState({environments});
-      storeOptions(Object.assign(this.state));
-   }
-
-   handleDeleteConfig(idx) {
-      const environments = Object.assign(this.state.environments);
-      environments.splice(idx, 1);
-      this.setState({environments});
-      storeOptions(Object.assign(this.state));
-   }
-
-   onLoad(data) {
-      this.setState(data);
-   }
-
-   render() {
-      return (
-          <div>
-             <Link to="/">
-                <CornerButton icon="arrow-left"/>
-             </Link>
-             <EnvironmentConfigList environments={this.state.environments} onDeleteConfig={this.handleDeleteConfig}/>
-             <div className="divider"></div>
-             <AddEnvironmentConfig onAddConfig={this.handleAddConfig}/>
-          </div>
-      );
-   }
-}
-
-function storeOptions(data) {
-   chrome.storage.sync.set(data, () => {
-   });
-}
-
-function getOptions(callback) {
-   chrome.storage.sync.get({environments: []}, data => callback(data));
-}
-
-export {ConfigurationPage};
+export {AddEnvironmentForm};

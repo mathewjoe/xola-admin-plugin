@@ -3,7 +3,7 @@ import ReactDOM from 'react-dom';
 import 'spectre.css/docs/dist/spectre.min.css';
 import './index.css';
 import {SearchPage} from './search_page/search_page';
-import {ConfigurationPage} from "./configuration_page";
+import {ConfigurationPage} from "./configuration_page/configuration_page";
 
 import {
    BrowserRouter as Router,

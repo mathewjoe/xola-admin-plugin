@@ -1,6 +1,5 @@
 import React from 'react';
 import {XXLIcon} from "../icon";
-import {Link} from "react-router-dom";
 
 export default function EmptyConfigurations(props) {
    return (
