@@ -59,7 +59,7 @@ class SellerSearchContainer extends Component {
    render() {
       return (
           <div>
-             <h3>Impersonation</h3>
+             <h3>Impersonator</h3>
              <div>
                 <SearchBar onSearchTextChange={this.props.onSearchTextChange}/>
                 <EnvironmentSelector onEnvChange={this.props.onEnvChange}

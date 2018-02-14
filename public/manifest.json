@@ -1,23 +1,14 @@
 {
   "manifest_version": 2,
 
-  "name": "Xola Mods",
-  "description": "Some custom tweaks to Xola",
+  "name": "Xola Impersonator",
+  "description": "Quick impersonation tool for Xola admins",
   "version": "1.0",
   "browser_action": {
     "default_icon": "icon.png",
     "default_popup": "index.html"
   },
   "permissions": [
-    "cookies",
-    "storage",
-    "http://xola.com/*",
-    "https://xola.com/*",
-    "http://xola.local/*",
-    "https://xola.local/*",
-    "http://xola2.local/*",
-    "https://xola2.local/*",
-    "http://xola.dev/*",
-    "https://xola.dev/*"
+    "storage"
   ]
 }
