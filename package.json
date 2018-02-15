@@ -14,7 +14,9 @@
   "scripts": {
     "start": "react-scripts start",
     "build": "react-scripts build",
+    "postbuild": "rm build/service-worker.js && rm build/asset-manifest.json",
     "build-watch": "nodemon node_modules/.bin/react-scripts build",
+    "build-zip": "yarn build && rm -f xola-impersonator.zip && zip -r xola-impersonator.zip build/",
     "test": "react-scripts test --env=jsdom",
     "eject": "react-scripts eject"
   },
