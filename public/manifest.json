@@ -1,9 +1,9 @@
 {
   "manifest_version": 2,
 
-  "name": "Xola Impersonator",
-  "description": "Quick impersonation tool for Xola admins",
-  "version": "1.0",
+  "name": "Xola Admin",
+  "description": "Utilities for admins of Xola",
+  "version": "1.0.2",
   "icons": {
     "128": "icon-128.png"
   },
