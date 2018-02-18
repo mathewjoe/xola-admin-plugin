@@ -49,7 +49,7 @@ class SearchBar extends Component {
           <div className="form-group">
              <label className="form-label">Search</label>
              <input className="form-input" type="text" name="search" id="search"
-                    placeholder="Name, Email, Username or Company" onChange={this.handleSearchTextChange}/>
+                    placeholder="Name, Email, Username or Company" autoFocus={true} onChange={this.handleSearchTextChange}/>
           </div>
       );
    }

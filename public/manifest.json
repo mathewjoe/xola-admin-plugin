@@ -3,12 +3,19 @@
 
   "name": "Xola Admin",
   "description": "Utilities for admins of Xola",
-  "version": "1.0.2",
+  "version": "1.0.3",
   "icons": {
     "128": "icon-128.png"
   },
   "browser_action": {
     "default_popup": "index.html"
+  },
+  "commands": {
+    "_execute_browser_action": {
+      "suggested_key": {
+        "default": "Ctrl+Shift+X"
+      }
+    }
   },
   "permissions": [
     "https://xola.com/*",
