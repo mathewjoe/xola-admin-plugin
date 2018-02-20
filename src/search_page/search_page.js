@@ -46,7 +46,11 @@ class SearchPage extends Component {
    performSearch() {
       if (!this.state.searchText) return;
       $.ajax({
-         url: `${this.state.selectedEnv.baseUrl}/api/users?search=${this.state.searchText}&type=1`,
+         url: `${this.state.selectedEnv.baseUrl}/api/users`,
+         data: {
+            search: this.state.searchText,
+            type: 1
+         },
          headers: {
             'X-API-KEY': this.state.selectedEnv.apiKey,
          },
