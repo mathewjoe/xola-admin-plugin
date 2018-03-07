@@ -1,23 +1,38 @@
 import './seller_tile.css';
 import React, {Component} from 'react';
+import {RegularIcon} from "../icon";
+import Icon from "../icon";
 
 class SellerTile extends Component {
+   handleToggleBookmark = (e) => {
+      e.preventDefault();
+      this.props.toggleBookmark(this.props.seller);
+   };
+
    render() {
-      const impersonateUrl = `${this.props.selectedEnv.baseUrl}/seller#seller=${this.props.seller.id}#apiKey=${this.props.selectedEnv.apiKey}`;
-      const adminAppUrl = `${this.props.selectedEnv.baseUrl}/admin#sellers/${this.props.seller.id}#apiKey=${this.props.selectedEnv.apiKey}`;
-      const imgUrl = `${this.props.selectedEnv.baseUrl}/api/users/${this.props.seller.id}/picture?size=small`;
+      const selectedEnv = this.props.selectedEnv;
+      const seller = this.props.seller;
+      const isBookmarked = selectedEnv.bookmarks && selectedEnv.bookmarks.find(bookmark => bookmark.id === seller.id);
+      const impersonateUrl = `${selectedEnv.baseUrl}/seller#seller=${seller.id}#apiKey=${selectedEnv.apiKey}`;
+      const adminAppUrl = `${selectedEnv.baseUrl}/admin#sellers/${seller.id}#apiKey=${selectedEnv.apiKey}`;
+      const imgUrl = `${selectedEnv.baseUrl}/api/users/${seller.id}/picture?size=small`;
       return (
           <a href={impersonateUrl} target="_blank">
              <div className="seller-tile tile tile-centered">
                 <div className="tile-icon">
-                   <img src={imgUrl} className="avatar avatar-sm" alt={this.props.seller.name}/>
+                   <img src={imgUrl} className="avatar" alt={seller.name}/>
                 </div>
                 <div className="tile-content">
-                   <div className="tile-title">{this.props.seller.name}</div>
+                   <div className="tile-title">{seller.name}</div>
                    <div className="title-subtitle">
-                      <div>{this.props.seller.email}</div>
+                      <div>{seller.email}</div>
                       <div className="admin-app-link"><a href={adminAppUrl} target="_blank">Open Admin App</a></div>
                    </div>
+                </div>
+                <div className="tile-action">
+                   <button className="btn btn-link" onClick={(e) => this.handleToggleBookmark(e)}>
+                      {isBookmarked ? <Icon name="star"/> : <RegularIcon name="star"/>}
+                   </button>
                 </div>
              </div>
           </a>
@@ -27,7 +42,8 @@ class SellerTile extends Component {
 
 class SellerTileList extends Component {
    renderSeller(seller) {
-      return <SellerTile selectedEnv={this.props.selectedEnv} seller={seller} key={seller.id}/>
+      return <SellerTile selectedEnv={this.props.selectedEnv} seller={seller}
+                         toggleBookmark={this.props.toggleBookmark} key={seller.id}/>
    }
 
    renderSellers() {

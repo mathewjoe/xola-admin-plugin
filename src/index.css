@@ -6,6 +6,10 @@ body {
     font-family: sans-serif;
 }
 
+.search-page {
+    min-width: 410px;
+}
+
 body::-webkit-scrollbar {
     width: 6px;
     background-color: #f1f1fc;
@@ -27,4 +31,9 @@ body::-webkit-scrollbar-track {
 .env-config-list .tile {
     margin: .7rem;
     max-width: 180px;
+}
+
+.btn-link:focus, .btn-link:active {
+    box-shadow: none;
+    border: none;
 }
