@@ -22,6 +22,14 @@
     background-color: #f1f1fc;
 }
 
-.seller-list .tile {
+.seller-list .seller-tile {
     margin: .75rem 0;
+}
+
+.seller-list a {
+    text-decoration: none;
+}
+
+.admin-app-link a:active, .admin-app-link a:hover {
+    text-decoration: underline;
 }
