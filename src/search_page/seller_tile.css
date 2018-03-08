@@ -24,6 +24,15 @@
 
 .seller-list .seller-tile {
     margin: .75rem 0;
+    /*color: #50596c;*/
+}
+
+.seller-tile .tile-title {
+    font-weight: bold;
+}
+
+.seller-tile .title-subtitle {
+    font-size: .7rem;
 }
 
 .seller-list a {
@@ -31,7 +40,7 @@
 }
 
 .app-links a+a {
-    margin-left: 5px;
+    margin-left: 10px;
 }
 
 .app-links a:active, .app-links a:hover, .app-links a:active {
