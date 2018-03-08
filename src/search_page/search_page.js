@@ -34,20 +34,25 @@ class SearchPage extends Component {
             sellers = sellers.concat(selectedEnv.bookmarks);
          }
          if (selectedEnv.recentlyAccessed && selectedEnv.recentlyAccessed.length) {
-            sellers = sellers.concat(selectedEnv.recentlyAccessed);
+            selectedEnv.recentlyAccessed.forEach(storedSeller => {
+               const exists = sellers.some(seller => seller.id === storedSeller.id);
+               if (!exists) sellers.push(storedSeller);
+            });
          }
       }
       return sellers;
    }
 
    loadEnvironments() {
-      chrome.storage.local.get('environments', data => {
+      chrome.storage.local.get(['environments', 'lastUsedEnv'], data => {
          const environments = data.environments;
          if (environments && environments.length) {
+            const lastUsedEnv = environments.find(env => env.name === data.lastUsedEnv);
+            const selectedEnv = lastUsedEnv ? lastUsedEnv : environments[0];
             this.setState({
                environments: environments,
-               selectedEnv: environments[0],
-               sellers: this.getSellers(environments[0])
+               selectedEnv: selectedEnv,
+               sellers: this.getSellers(selectedEnv)
             });
          }
       });
@@ -68,6 +73,7 @@ class SearchPage extends Component {
    }
 
    handleEnvChange(selectedEnv) {
+      chrome.storage.local.set({lastUsedEnv: selectedEnv.name});
       this.setState({selectedEnv});
       this.performSearch();
    }
