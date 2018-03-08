@@ -1,0 +1,38 @@
+.copy-link {
+    color: #32b643;
+    padding: 5px;
+    margin-left: 5px;
+    font-size: 0.6rem;
+    font-weight: bold;
+    opacity: 0;
+    transition: opacity 0.2s ease-in;
+    white-space: nowrap;
+}
+
+.copy-link::after {
+    content: attr(data-after-copy);
+    position: relative;
+    padding: 5px;
+    opacity: 0.001;
+    white-space: nowrap;
+}
+
+.copy-container:hover .copy-link {
+    opacity: 1;
+}
+
+.copy-container.copying .copy-link::after {
+    animation: float-right .8s ease-out;
+}
+
+@keyframes float-right {
+    0% {
+        left: 0;
+        opacity: 1;
+    }
+
+    100% {
+        left: 20px;
+        opacity: 0;
+    }
+}

@@ -2,6 +2,7 @@ import './seller_tile.css';
 import React, {Component} from 'react';
 import {RegularIcon} from "../icon";
 import Icon from "../icon";
+import CopyField from "./copy_field";
 
 class SellerTile extends Component {
    handleToggleBookmark = (e) => {
@@ -24,9 +25,11 @@ class SellerTile extends Component {
                    <img src={imgUrl} className="avatar" alt={seller.name}/>
                 </div>
                 <div className="tile-content">
-                   <div className="tile-title">{seller.name}</div>
+                   <div className="tile-title">
+                      <CopyField displayText={seller.name} copyText="Copy ID" clipboardText={seller.id}/>
+                   </div>
                    <div className="title-subtitle">
-                      <div>{seller.email}</div>
+                      <CopyField displayText={seller.email} clipboardText={seller.email}/>
                       <div className="app-links">
                          <a href={adminAppUrl} target="_blank">Impersonate</a>
                          <a href={impersonateUrl} target="_blank">Admin</a>
