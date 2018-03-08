@@ -43,10 +43,38 @@ class SearchPage extends Component {
       return sellers;
    }
 
+   getCheckoutUrl(env) {
+      return $.ajax(`${env.baseUrl}/checkout.js`)
+          .then(resp => {
+             const matches = /xola\.checkoutUrl.*(http.*)';/.exec(resp);
+             if (matches) {
+                let url = matches[1];
+                url = url.replace(/\\x([a-fA-F0-9]{2})/g, function(a, b) {
+                   return String.fromCharCode(parseInt(b, 16));
+                });
+                console.log(url.toString());
+                return url.toString();
+             }
+          });
+   }
+
+   fetchCheckoutUrls(environments) {
+      environments.forEach(env => {
+         if (env.checkoutUrl) return;
+         this.getCheckoutUrl(env).then(checkoutUrl => {
+            if (checkoutUrl) {
+               env.checkoutUrl = checkoutUrl;
+               this.saveEnvironment(env);
+            }
+         });
+      });
+   }
+
    loadEnvironments() {
       chrome.storage.local.get(['environments', 'lastUsedEnv'], data => {
          const environments = data.environments;
          if (environments && environments.length) {
+            this.fetchCheckoutUrls(environments);
             const lastUsedEnv = environments.find(env => env.name === data.lastUsedEnv);
             const selectedEnv = lastUsedEnv ? lastUsedEnv : environments[0];
             this.setState({

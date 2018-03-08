@@ -27,7 +27,16 @@ class SellerTile extends Component {
                    <div className="tile-title">{seller.name}</div>
                    <div className="title-subtitle">
                       <div>{seller.email}</div>
-                      <div className="admin-app-link"><a href={adminAppUrl} target="_blank">Open Admin App</a></div>
+                      <div className="app-links">
+                         <a href={adminAppUrl} target="_blank">Impersonate</a>
+                         <a href={impersonateUrl} target="_blank">Admin</a>
+                         {
+                            selectedEnv.checkoutUrl
+                                ? <a href={selectedEnv.checkoutUrl + '#seller/' + seller.id} target="_blank">
+                                   Checkout </a>
+                                : ""
+                         }
+                      </div>
                    </div>
                 </div>
                 <div className="tile-action">

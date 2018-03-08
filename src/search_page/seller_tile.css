@@ -30,6 +30,10 @@
     text-decoration: none;
 }
 
-.admin-app-link a:active, .admin-app-link a:hover {
+.app-links a+a {
+    margin-left: 5px;
+}
+
+.app-links a:active, .app-links a:hover, .app-links a:active {
     text-decoration: underline;
 }
