@@ -19,6 +19,7 @@
   },
   "permissions": [
     "tabs",
+    "contextMenus",
     "storage"
   ],
   "content_scripts": [
@@ -27,6 +28,12 @@
       "js": ["content_scripts/index.js"]
     }
   ],
+  "background": {
+    "scripts": [
+      "background.js"
+    ],
+    "persistent": false
+  },
   "web_accessible_resources": [
     "content_scripts/reimpersonate.js"
   ]
