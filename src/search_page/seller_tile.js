@@ -6,6 +6,7 @@ import Icon from "../icon";
 class SellerTile extends Component {
    handleToggleBookmark = (e) => {
       e.preventDefault();
+      e.stopPropagation();
       this.props.toggleBookmark(this.props.seller);
    };
 
@@ -17,7 +18,7 @@ class SellerTile extends Component {
       const adminAppUrl = `${selectedEnv.baseUrl}/admin#sellers/${seller.id}#apiKey=${selectedEnv.apiKey}`;
       const imgUrl = `${selectedEnv.baseUrl}/api/users/${seller.id}/picture?size=small`;
       return (
-          <a href={impersonateUrl} target="_blank">
+          <a href={impersonateUrl} target="_blank" onClick={() => this.props.onImpersonate(this.props.seller)}>
              <div className="seller-tile tile tile-centered">
                 <div className="tile-icon">
                    <img src={imgUrl} className="avatar" alt={seller.name}/>
@@ -30,7 +31,7 @@ class SellerTile extends Component {
                    </div>
                 </div>
                 <div className="tile-action">
-                   <button className="btn btn-link" onClick={(e) => this.handleToggleBookmark(e)}>
+                   <button className="btn btn-link" onClick={this.handleToggleBookmark}>
                       {isBookmarked ? <Icon name="star"/> : <RegularIcon name="star"/>}
                    </button>
                 </div>
@@ -42,8 +43,7 @@ class SellerTile extends Component {
 
 class SellerTileList extends Component {
    renderSeller(seller) {
-      return <SellerTile selectedEnv={this.props.selectedEnv} seller={seller}
-                         toggleBookmark={this.props.toggleBookmark} key={seller.id}/>
+      return <SellerTile seller={seller} key={seller.id} {...this.props} />
    }
 
    renderSellers() {

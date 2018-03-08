@@ -17,12 +17,27 @@ class SearchPage extends Component {
          searchText: '',
          selectedEnv: {},
          sellers: [],
-         environments: []
+         environments: [],
+         recentlyAccessedLimit: 5,
       };
-      _bindAll(this, ['handleEnvChange', 'handleSearchTextChange', 'toggleBookmark']);
+      _bindAll(this, ['handleEnvChange', 'handleSearchTextChange', 'toggleBookmark', 'onImpersonate']);
       this.performSearch = _debounce(this.performSearch, 200);
       this.performBackendSearch = _debounce(this.performBackendSearch, 300);
       this.loadEnvironments();
+   }
+
+   getSellers(selectedEnv) {
+      let sellers = [];
+      selectedEnv = selectedEnv || this.state.selectedEnv;
+      if (selectedEnv) {
+         if (selectedEnv.bookmarks && selectedEnv.bookmarks.length) {
+            sellers = sellers.concat(selectedEnv.bookmarks);
+         }
+         if (selectedEnv.recentlyAccessed && selectedEnv.recentlyAccessed.length) {
+            sellers = sellers.concat(selectedEnv.recentlyAccessed);
+         }
+      }
+      return sellers;
    }
 
    loadEnvironments() {
@@ -32,7 +47,7 @@ class SearchPage extends Component {
             this.setState({
                environments: environments,
                selectedEnv: environments[0],
-               sellers: environments[0].bookmarks.slice()
+               sellers: this.getSellers(environments[0])
             });
          }
       });
@@ -64,16 +79,35 @@ class SearchPage extends Component {
 
    toggleBookmark(bookmarkedSeller) {
       const selectedEnv = Object.assign(this.state.selectedEnv);
-      if (selectedEnv.bookmarks) {
-         const index = selectedEnv.bookmarks.findIndex(seller => seller.id === bookmarkedSeller.id);
-         if (index === -1) {
-            selectedEnv.bookmarks.push(bookmarkedSeller);
-         } else {
-            selectedEnv.bookmarks.splice(index, 1);
-         }
-      } else {
-         selectedEnv.bookmarks = [bookmarkedSeller];
+      if (!selectedEnv.bookmarks) {
+         selectedEnv.bookmarks = [];
       }
+      const index = selectedEnv.bookmarks.findIndex(seller => seller.id === bookmarkedSeller.id);
+      if (index === -1) {
+         selectedEnv.bookmarks.push(bookmarkedSeller);
+      } else {
+         selectedEnv.bookmarks.splice(index, 1);
+      }
+      this.setState({selectedEnv});
+      this.saveEnvironment(selectedEnv);
+   }
+
+   processRecentlyAccessed(impersonatedSeller, recentlyAccessed = []) {
+      let index = recentlyAccessed.findIndex(s => s.id === impersonatedSeller.id);
+      if (index !== -1) {
+         recentlyAccessed.splice(index, 1);
+      }
+      impersonatedSeller.lastImpersonated = new Date();
+      recentlyAccessed.splice(0, 0, impersonatedSeller); // insert this seller at the start of this list
+      recentlyAccessed.splice(this.state.recentlyAccessedLimit, 1); // maintain list limit
+   }
+
+   onImpersonate(impersonatedSeller) {
+      const selectedEnv = Object.assign(this.state.selectedEnv);
+      if (!selectedEnv.recentlyAccessed) {
+         selectedEnv.recentlyAccessed = [];
+      }
+      this.processRecentlyAccessed(impersonatedSeller, selectedEnv.recentlyAccessed);
       this.setState({selectedEnv});
       this.saveEnvironment(selectedEnv);
    }
@@ -102,8 +136,8 @@ class SearchPage extends Component {
    performSearch() {
       if (this.state.searchText) {
          let filtered = [];
-         if (this.state.selectedEnv.bookmarks) {
-            filtered = this.state.selectedEnv.bookmarks.filter(pinnedSeller => {
+         if (this.state.sellers) {
+            filtered = this.state.sellers.filter(pinnedSeller => {
                return pinnedSeller.username.includes(this.state.searchText)
                    || pinnedSeller.email.includes(this.state.searchText)
                    || pinnedSeller.name.includes(this.state.searchText);
@@ -113,7 +147,7 @@ class SearchPage extends Component {
          this.performBackendSearch();
       } else {
          // Clear search results, reset to stored bookmarks
-         this.setState({sellers: this.state.selectedEnv.bookmarks.slice() || []});
+         this.setState({sellers: this.getSellers()});
       }
    }
 
@@ -126,7 +160,8 @@ class SearchPage extends Component {
                                     environments={this.state.environments}/>
              <SellerTileList selectedEnv={this.state.selectedEnv}
                              sellers={this.state.sellers}
-                             toggleBookmark={this.toggleBookmark}/>
+                             toggleBookmark={this.toggleBookmark}
+                             onImpersonate={this.onImpersonate}/>
           </div>
       );
       return (
