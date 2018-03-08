@@ -1,4 +1,6 @@
+/*global chrome*/
 import React, {Component} from 'react';
+import Icon, {SpinningIcon} from "../icon";
 
 class EnvironmentSelector extends Component {
    constructor(props) {
@@ -56,10 +58,38 @@ class SearchBar extends Component {
 }
 
 class SellerSearchContainer extends Component {
+   constructor(props) {
+      super(props);
+      this.state = {reimpersonating: false, canImpersonate: true};
+      this.listenForChangesToCurrentTab();
+   }
+
+   listenForChangesToCurrentTab() {
+      chrome.tabs.query({active: true, currentWindow: true}, tabs => {
+         this.tabId = tabs[0].id;
+         this.setState({canImpersonate: /xola/i.test(tabs[0].title)});
+         chrome.tabs.onUpdated.addListener((tabId, {}, tab) => {
+            if (tabId === this.tabId) {
+               this.setState({reimpersonating: tab.status === 'loading'});
+            }
+         });
+      });
+   }
+
+   handleReimpersonate = () => {
+      chrome.tabs.sendMessage(this.tabId, {reimpersonate: true});
+   };
+
    render() {
       return (
           <div>
-             <h3>Impersonator</h3>
+             <h3>Impersonator
+                <button
+                    className={"btn btn-link " + (this.state.canImpersonate ? "tooltip tooltip-right" : "disabled")}
+                    data-tooltip="Re-impersonate" onClick={this.handleReimpersonate}>
+                   {this.state.reimpersonating ? <SpinningIcon name="sync-alt"/> : <Icon name="sync-alt"/>}
+                </button>
+             </h3>
              <div>
                 <SearchBar onSearchTextChange={this.props.onSearchTextChange}/>
                 <EnvironmentSelector onEnvChange={this.props.onEnvChange}

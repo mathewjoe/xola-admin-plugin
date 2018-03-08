@@ -1,9 +1,15 @@
 import React from "react";
 
 export default function Icon(props) {
-   props.size = props.size ? props.size : '';
-   props.type = props.type ? props.type : 'fas';
-   return <i className={`${props.type} fa-${props.name} ${props.size}`}></i>;
+   props.size = props.size || '';
+   props.type = props.type || 'fas';
+   props.spin = props.spin ? 'fa-spin' : '';
+   return <i className={`${props.type} fa-${props.name} ${props.size} ${props.spin}`}></i>;
+}
+
+export function SpinningIcon(props) {
+   const {type, ...other} = props;
+   return <Icon {...other} spin={true}/>;
 }
 
 export function RegularIcon(props) {

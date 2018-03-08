@@ -18,10 +18,16 @@
     }
   },
   "permissions": [
-    "https://xola.com/*",
-    "https://sandbox.xola.com/*",
-    "https://staging.xola.com/*",
-    "http://xola.local/*",
+    "tabs",
     "storage"
+  ],
+  "content_scripts": [
+    {
+      "matches": ["<all_urls>"],
+      "js": ["content_scripts/index.js"]
+    }
+  ],
+  "web_accessible_resources": [
+    "content_scripts/reimpersonate.js"
   ]
 }
