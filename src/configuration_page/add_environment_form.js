@@ -117,7 +117,7 @@ class AddEnvironmentForm extends Component {
          this.setState({loading: true});
          this.testConnection(this.state.env)
              .then((resp) => {
-                this.props.onAddConfig({
+                this.props.onAddEnv({
                    name: this.state.env.name,
                    baseUrl: this.state.env.baseUrl,
                    apiKey: resp.apiKey

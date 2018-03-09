@@ -1,43 +1,39 @@
-/*global chrome*/
-import 'spectre.css/dist/spectre-icons.min.css';
 import React, {Component} from 'react';
 import {Link} from 'react-router-dom';
 import CornerButton from '../corner_button/corner_button';
 import {EnvironmentTileList} from "./configuration_tile";
 import {AddEnvironmentForm} from "./add_environment_form";
+import {Storage} from "../storage";
 
 class ConfigurationPage extends Component {
    constructor(props) {
       super(props);
-      this.handleAddConfig = this.handleAddConfig.bind(this);
-      this.handleDeleteConfig = this.handleDeleteConfig.bind(this);
-      this.onLoad = this.onLoad.bind(this);
       this.state = {
          environments: []
       };
-      getOptions(this.onLoad);
+      Storage.loadEnvironments().then(this.onLoad);
    }
 
-   updateEnvironments(environments) {
+   handleAddEnv = (newEnv) => {
+      const environments = this.state.environments.slice();
+      environments.push(newEnv);
+      Storage.addEnvironment(newEnv);
       this.setState({environments});
-      storeOptions(Object.assign(this.state));
-   }
+   };
 
-   handleAddConfig(newConfig) {
-      const environments = Object.assign(this.state.environments);
-      environments.push(newConfig);
-      this.updateEnvironments(environments);
-   }
+   handleDeleteEnv = (deletedEnv) => {
+      const environments = this.state.environments.slice();
+      const index = environments.findIndex(env => env.name === deletedEnv.name);
+      if (index !== -1) {
+         environments.splice(index, 1);
+         Storage.deleteEnvironment(deletedEnv);
+         this.setState({environments});
+      }
+   };
 
-   handleDeleteConfig(idx) {
-      const environments = Object.assign(this.state.environments);
-      environments.splice(idx, 1);
-      this.updateEnvironments(environments);
-   }
-
-   onLoad(data) {
-      this.setState(data);
-   }
+   onLoad = (data) => {
+      this.setState({environments: data.environments});
+   };
 
    render() {
       return (
@@ -45,20 +41,12 @@ class ConfigurationPage extends Component {
              <Link to="/">
                 <CornerButton icon="arrow-left"/>
              </Link>
-             <EnvironmentTileList environments={this.state.environments} onDeleteConfig={this.handleDeleteConfig}/>
+             <EnvironmentTileList environments={this.state.environments} onDeleteEnv={this.handleDeleteEnv}/>
              <div className="divider"></div>
-             <AddEnvironmentForm onAddConfig={this.handleAddConfig}/>
+             <AddEnvironmentForm onAddEnv={this.handleAddEnv}/>
           </div>
       );
    }
-}
-
-function storeOptions(data) {
-   chrome.storage.local.set(data, () => {});
-}
-
-function getOptions(callback) {
-   chrome.storage.local.get({environments: []}, data => callback(data));
 }
 
 export {ConfigurationPage};

@@ -1,6 +1,4 @@
-/* global chrome */
 import _debounce from 'lodash/debounce';
-import _bindAll from 'lodash/bindAll';
 import $ from 'jquery';
 import './search_page.css';
 import React, {Component} from 'react';
@@ -9,6 +7,7 @@ import {SellerTileList} from "./seller_tile";
 import {SellerSearchContainer} from "./search_input";
 import CornerButton from "../corner_button/corner_button";
 import EmptyConfigurations from "./empty_configurations";
+import {Storage} from "../storage";
 
 class SearchPage extends Component {
    constructor(props) {
@@ -20,10 +19,26 @@ class SearchPage extends Component {
          environments: [],
          recentlyAccessedLimit: 5,
       };
-      _bindAll(this, ['handleEnvChange', 'handleSearchTextChange', 'toggleBookmark', 'onImpersonate']);
       this.performSearch = _debounce(this.performSearch, 200);
       this.performBackendSearch = _debounce(this.performBackendSearch, 300);
-      this.loadEnvironments();
+      Storage.loadEnvironments().then(this.onLoadEnvironments);
+   }
+
+   onLoadEnvironments = (data) => {
+      const environments = data.environments;
+      if (environments && environments.length) {
+         const lastUsedEnv = environments.find(env => env.name === data.lastUsedEnv);
+         const selectedEnv = lastUsedEnv ? lastUsedEnv : environments[0];
+         this.setState({environments: environments});
+         this.setupEnvironment(selectedEnv);
+      }
+   };
+
+   setupEnvironment(selectedEnv) {
+      this.setState({
+         selectedEnv: selectedEnv,
+         sellers: this.getSellers(selectedEnv)
+      });
    }
 
    getSellers(selectedEnv) {
@@ -43,75 +58,18 @@ class SearchPage extends Component {
       return sellers;
    }
 
-   getCheckoutUrl(env) {
-      return $.ajax(`${env.baseUrl}/checkout.js`)
-          .then(resp => {
-             const matches = /xola\.checkoutUrl.*(http.*)';/.exec(resp);
-             if (matches) {
-                let url = matches[1];
-                url = url.replace(/\\x([a-fA-F0-9]{2})/g, function(a, b) {
-                   return String.fromCharCode(parseInt(b, 16));
-                });
-                console.log(url.toString());
-                return url.toString();
-             }
-          });
-   }
-
-   fetchCheckoutUrls(environments) {
-      environments.forEach(env => {
-         if (env.checkoutUrl) return;
-         this.getCheckoutUrl(env).then(checkoutUrl => {
-            if (checkoutUrl) {
-               env.checkoutUrl = checkoutUrl;
-               this.saveEnvironment(env);
-            }
-         });
-      });
-   }
-
-   loadEnvironments() {
-      chrome.storage.local.get(['environments', 'lastUsedEnv'], data => {
-         const environments = data.environments;
-         if (environments && environments.length) {
-            this.fetchCheckoutUrls(environments);
-            const lastUsedEnv = environments.find(env => env.name === data.lastUsedEnv);
-            const selectedEnv = lastUsedEnv ? lastUsedEnv : environments[0];
-            this.setState({
-               environments: environments,
-               selectedEnv: selectedEnv,
-               sellers: this.getSellers(selectedEnv)
-            });
-         }
-      });
-   }
-
-   saveEnvironment(updatedEnv) {
-      chrome.storage.local.get('environments', data => {
-         const environments = data.environments;
-         if (environments) {
-            const index = environments.findIndex(env => env.name === updatedEnv.name);
-            if (index !== -1) {
-               environments.splice(index, 1, updatedEnv);
-               chrome.storage.local.set({environments}, () => {
-               });
-            }
-         }
-      });
-   }
-
-   handleEnvChange(selectedEnv) {
-      chrome.storage.local.set({lastUsedEnv: selectedEnv.name});
-      this.setState({selectedEnv});
+   handleEnvChange = (selectedEnv) => {
+      Storage.save({lastUsedEnv: selectedEnv.name});
+      this.setupEnvironment(selectedEnv);
       this.performSearch();
-   }
+   };
 
-   handleSearchTextChange(searchText) {
+   handleSearchTextChange = (searchText) => {
       this.setState({searchText});
       this.performSearch();
-   }
+   };
 
-   toggleBookmark(bookmarkedSeller) {
+   toggleBookmark = (bookmarkedSeller) => {
       const selectedEnv = Object.assign(this.state.selectedEnv);
       if (!selectedEnv.bookmarks) {
          selectedEnv.bookmarks = [];
@@ -123,8 +81,8 @@ class SearchPage extends Component {
          selectedEnv.bookmarks.splice(index, 1);
       }
       this.setState({selectedEnv});
-      this.saveEnvironment(selectedEnv);
-   }
+      Storage.saveEnvironment(selectedEnv);
+   };
 
    processRecentlyAccessed(impersonatedSeller, recentlyAccessed = []) {
       let index = recentlyAccessed.findIndex(s => s.id === impersonatedSeller.id);
@@ -136,15 +94,15 @@ class SearchPage extends Component {
       recentlyAccessed.splice(this.state.recentlyAccessedLimit, 1); // maintain list limit
    }
 
-   onImpersonate(impersonatedSeller) {
+   onImpersonate = (impersonatedSeller) => {
       const selectedEnv = Object.assign(this.state.selectedEnv);
       if (!selectedEnv.recentlyAccessed) {
          selectedEnv.recentlyAccessed = [];
       }
       this.processRecentlyAccessed(impersonatedSeller, selectedEnv.recentlyAccessed);
       this.setState({selectedEnv});
-      this.saveEnvironment(selectedEnv);
-   }
+      Storage.saveEnvironment(selectedEnv);
+   };
 
    performBackendSearch() {
       $.ajax({

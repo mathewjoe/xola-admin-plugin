@@ -10,7 +10,7 @@ class EnvironmentTile extends Component {
                 <div className="tile-subtitle text-gray">{this.props.env.baseUrl}</div>
              </div>
              <div className="tile-action">
-                <button className="btn btn-link" onClick={() => this.props.onDeleteConfig()}>
+                <button className="btn btn-link" onClick={() => this.props.onDeleteEnv(this.props.env)}>
                    <Icon name="trash"/>
                 </button>
              </div>
@@ -31,7 +31,7 @@ class EnvironmentTileList extends Component {
 
    renderConfigurations() {
       return this.props.environments.map((env, idx) => (
-          <EnvironmentTile env={env} key={idx} onDeleteConfig={() => this.props.onDeleteConfig(idx)}/>
+          <EnvironmentTile env={env} key={idx} onDeleteEnv={this.props.onDeleteEnv}/>
       ));
    }
 }
