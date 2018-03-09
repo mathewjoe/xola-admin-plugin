@@ -37,7 +37,7 @@ class ConfigurationPage extends Component {
 
    render() {
       return (
-          <div>
+          <div className="configuration-page">
              <Link to="/">
                 <CornerButton icon="arrow-left"/>
              </Link>

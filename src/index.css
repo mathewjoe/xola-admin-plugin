@@ -2,12 +2,17 @@ body {
     margin: 0;
     background-color: #f8f9fa;
     min-width: 350px;
-    padding: 30px 15px;
+    padding: 25px 3px;
     font-family: sans-serif;
 }
 
 .search-page {
-    min-width: 410px;
+    min-width: 548px;
+}
+
+.configuration-page {
+    padding: 10px;
+    min-width: 400px;
 }
 
 body::-webkit-scrollbar {

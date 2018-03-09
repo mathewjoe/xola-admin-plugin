@@ -1,5 +1,5 @@
 .seller-list {
-    max-height: 325px;
+    max-height: 340px;
     overflow-y: auto;
     margin-top: 10px;
 }
@@ -23,8 +23,13 @@
 }
 
 .seller-list .seller-tile {
-    margin: .75rem 0;
     /*color: #50596c;*/
+    margin: .75rem 0;
+    width: 500px;
+    margin-right: 10px;
+    padding: 15px 10px;
+    background: white;
+    box-shadow: 2px 2px 2px #e5e5f9;
 }
 
 .seller-tile .tile-title {
@@ -33,16 +38,18 @@
 
 .seller-tile .title-subtitle {
     font-size: .7rem;
+    margin-top: 2px;
 }
 
 .seller-list a {
     text-decoration: none;
+    color: #667189;
+}
+
+.app-links {
+    margin-top: 3px;
 }
 
 .app-links a+a {
-    margin-left: 10px;
-}
-
-.app-links a:active, .app-links a:hover, .app-links a:active {
-    text-decoration: underline;
+    margin-left: 4px;
 }

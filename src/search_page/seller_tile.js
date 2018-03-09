@@ -20,7 +20,7 @@ class SellerTile extends Component {
       const imgUrl = `${selectedEnv.baseUrl}/api/users/${seller.id}/picture?size=small`;
       return (
           <a href={impersonateUrl} target="_blank" onClick={() => this.props.onImpersonate(this.props.seller)}>
-             <div className="seller-tile tile tile-centered">
+             <div className="seller-tile tile">
                 <div className="tile-icon">
                    <img src={imgUrl} className="avatar" alt={seller.name}/>
                 </div>
@@ -31,11 +31,11 @@ class SellerTile extends Component {
                    <div className="title-subtitle">
                       <CopyField displayText={seller.email} clipboardText={seller.email}/>
                       <div className="app-links">
-                         <a href={adminAppUrl} target="_blank">Impersonate</a>
-                         <a href={impersonateUrl} target="_blank">Admin</a>
+                         <a href={adminAppUrl} target="_blank" className="chip">Impersonate</a>
+                         <a href={impersonateUrl} target="_blank" className="chip">Admin</a>
                          {
                             selectedEnv.checkoutUrl
-                                ? <a href={selectedEnv.checkoutUrl + '#seller/' + seller.id} target="_blank">
+                                ? <a href={selectedEnv.checkoutUrl + '#seller/' + seller.id} target="_blank" className="chip">
                                    Checkout </a>
                                 : ""
                          }
