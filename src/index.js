@@ -10,15 +10,25 @@ import {
    Route,
    Switch
 } from 'react-router-dom';
+import {Storage} from "./storage";
 
-const App = () => (
-    <Router>
-       <Switch>
-          <Route path="/search" component={SearchPage}/>
-          <Route path="/configuration" component={ConfigurationPage}/>
-          <Route component={SearchPage}/>
-       </Switch>
-    </Router>
-);
+class App extends React.Component {
+   componentDidMount() {
+      Storage.fetchCheckoutUrls();
+      Storage.refreshSellers();
+   }
+
+   render() {
+      return (
+          <Router>
+             <Switch>
+                <Route path="/search" component={SearchPage}/>
+                <Route path="/configuration" component={ConfigurationPage}/>
+                <Route component={SearchPage}/>
+             </Switch>
+          </Router>
+      );
+   }
+}
 
 ReactDOM.render(<App />, document.getElementById('root'));

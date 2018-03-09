@@ -1,6 +1,6 @@
-import $ from "jquery";
 import React, {Component} from "react";
 import {Storage} from "../storage";
+import {ENV} from "../env";
 
 const PROTOCOL = {HTTPS: 'https://', HTTP: 'http://'};
 
@@ -98,27 +98,13 @@ class AddEnvironmentForm extends Component {
       );
    }
 
-   fetchUser(env) {
-      const headers = {};
-      if (env.apiKey) {
-         headers["X-API-KEY"] = env.apiKey;
-      } else {
-         headers["Authorization"] = "Basic " + btoa(`${env.email}:${env.password}`)
-      }
-
-      return $.ajax({
-         url: `${env.baseUrl}/api/users/me`,
-         headers
-      });
-   }
-
    handleSubmit = (e) => {
       e.preventDefault();
       if (this.state.env.name && this.state.env.domain && (this.state.env.apiKey || this.state.env.email)) {
          this.setState({loading: true});
          Promise.all([
-            this.fetchUser(this.state.env),
-            Storage.getCheckoutUrl(this.state.env)
+            ENV.getAdmin(this.state.env),
+            ENV.getCheckoutUrl(this.state.env)
          ])
              .then((resp) => {
                 const user = resp[0];
