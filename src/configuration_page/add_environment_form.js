@@ -1,5 +1,6 @@
 import $ from "jquery";
 import React, {Component} from "react";
+import {Storage} from "../storage";
 
 const PROTOCOL = {HTTPS: 'https://', HTTP: 'http://'};
 
@@ -97,7 +98,7 @@ class AddEnvironmentForm extends Component {
       );
    }
 
-   testConnection(env) {
+   fetchUser(env) {
       const headers = {};
       if (env.apiKey) {
          headers["X-API-KEY"] = env.apiKey;
@@ -115,12 +116,18 @@ class AddEnvironmentForm extends Component {
       e.preventDefault();
       if (this.state.env.name && this.state.env.domain && (this.state.env.apiKey || this.state.env.email)) {
          this.setState({loading: true});
-         this.testConnection(this.state.env)
+         Promise.all([
+            this.fetchUser(this.state.env),
+            Storage.getCheckoutUrl(this.state.env)
+         ])
              .then((resp) => {
+                const user = resp[0];
+                const checkoutUrl = resp[1];
                 this.props.onAddEnv({
                    name: this.state.env.name,
                    baseUrl: this.state.env.baseUrl,
-                   apiKey: resp.apiKey
+                   apiKey: user.apiKey,
+                   checkoutUrl
                 });
                 this.setState(this.getDefaultState());
              })
