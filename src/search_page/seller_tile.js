@@ -31,8 +31,8 @@ class SellerTile extends Component {
                    <div className="title-subtitle">
                       <CopyField displayText={seller.email} clipboardText={seller.email}/>
                       <div className="app-links">
-                         <a href={adminAppUrl} target="_blank" className="chip">Impersonate</a>
-                         <a href={impersonateUrl} target="_blank" className="chip">Admin</a>
+                         <a href={impersonateUrl} target="_blank" className="chip">Impersonate</a>
+                         <a href={adminAppUrl} target="_blank" className="chip">Admin</a>
                          {
                             selectedEnv.checkoutUrl
                                 ? <a href={selectedEnv.checkoutUrl + '#seller/' + seller.id} target="_blank" className="chip">
