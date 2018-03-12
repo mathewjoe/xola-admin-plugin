@@ -50,6 +50,10 @@
     margin-top: 3px;
 }
 
+.app-links a {
+    margin-left: 0;
+}
+
 .app-links a+a {
     margin-left: 4px;
 }

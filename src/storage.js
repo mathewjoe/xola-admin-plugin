@@ -71,7 +71,6 @@ const Storage = {
                 if (env.recentlyAccessed) sellers = sellers.concat(env.recentlyAccessed);
 
                 const promises = sellers.map(seller => {
-                   console.log(seller.lastFetchedAt);
                    const currentTime = (new Date()).getTime();
                    if (!seller.lastFetchedAt) {
                       seller.lastFetchedAt = currentTime;

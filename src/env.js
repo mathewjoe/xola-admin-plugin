@@ -19,7 +19,6 @@ const ENV = {
    },
 
    getSeller(seller, env) {
-      console.log('fetching seller');
       return $.ajax({
          url: `${env.baseUrl}/api/users/${seller.id}`,
          headers: this.getHeaders(env)
