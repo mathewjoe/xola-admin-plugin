@@ -3,7 +3,7 @@
 
   "name": "Xola Admin",
   "description": "Utilities for admins of Xola",
-  "version": "1.0.3",
+  "version": "1.1.0",
   "icons": {
     "128": "icon-128.png"
   },
