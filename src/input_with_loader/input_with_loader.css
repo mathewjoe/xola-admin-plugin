@@ -1,0 +1,9 @@
+.input-with-loader {
+    position: relative;
+}
+
+.input-with-loader .loader {
+    position: absolute;
+    top: 0;
+    right: 0;
+}

@@ -1,3 +1,7 @@
+.search-page .form-group {
+    margin-right: 15px;
+}
+
 .go-to-settings:hover i {
     animation: spin 1s linear infinite;
 }

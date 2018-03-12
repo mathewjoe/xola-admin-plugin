@@ -14,6 +14,7 @@ class SearchPage extends Component {
       super(props);
       this.state = {
          searchText: '',
+         searching: false,
          selectedEnv: {},
          sellers: [],
          environments: [],
@@ -65,7 +66,7 @@ class SearchPage extends Component {
    };
 
    handleSearchTextChange = (searchText) => {
-      this.setState({searchText});
+      this.setState({searchText, searching: true});
       this.performSearch();
    };
 
@@ -89,7 +90,7 @@ class SearchPage extends Component {
       if (index !== -1) {
          recentlyAccessed.splice(index, 1);
       }
-      impersonatedSeller.lastImpersonated = new Date();
+      impersonatedSeller.lastImpersonated = (new Date()).getTime();
       recentlyAccessed.splice(0, 0, impersonatedSeller); // insert this seller at the start of this list
       recentlyAccessed.splice(this.state.recentlyAccessedLimit, 1); // maintain list limit
    }
@@ -121,7 +122,7 @@ class SearchPage extends Component {
              // Remove any duplicate sellers
              sellers = sellers.filter(seller => !filtered.find(filteredSeller => filteredSeller.id === seller.id));
              filtered = filtered.concat(sellers);
-             this.setState({sellers: filtered});
+             this.setState({sellers: filtered, searching: false});
           });
    }
 
@@ -139,7 +140,7 @@ class SearchPage extends Component {
          this.performBackendSearch();
       } else {
          // Clear search results, reset to stored bookmarks
-         this.setState({sellers: this.getSellers()});
+         this.setState({sellers: this.getSellers(), searching: false});
       }
    }
 
@@ -148,6 +149,7 @@ class SearchPage extends Component {
           <div className="container">
              <SellerSearchContainer onEnvChange={this.handleEnvChange}
                                     onSearchTextChange={this.handleSearchTextChange}
+                                    searching={this.state.searching}
                                     selectedEnv={this.state.selectedEnv}
                                     environments={this.state.environments}/>
              <SellerTileList selectedEnv={this.state.selectedEnv}

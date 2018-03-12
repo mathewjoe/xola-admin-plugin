@@ -1,4 +1,5 @@
 import React, {Component} from 'react';
+import InputWithLoader from "../input_with_loader/input_with_loader";
 
 class EnvironmentSelector extends Component {
    constructor(props) {
@@ -48,8 +49,8 @@ class SearchBar extends Component {
       return (
           <div className="form-group">
              <label className="form-label">Search</label>
-             <input className="form-input" type="text" name="search" id="search"
-                    placeholder="Name, Email, Username or Company" autoFocus={true} onChange={this.handleSearchTextChange}/>
+             <InputWithLoader name="search" placeholder="Name, Email, Username or Company"
+                              onChange={this.handleSearchTextChange} loading={this.props.searching}/>
           </div>
       );
    }
@@ -61,7 +62,7 @@ class SellerSearchContainer extends Component {
           <div>
              <h3>Impersonator</h3>
              <div>
-                <SearchBar onSearchTextChange={this.props.onSearchTextChange}/>
+                <SearchBar onSearchTextChange={this.props.onSearchTextChange} searching={this.props.searching}/>
                 <EnvironmentSelector onEnvChange={this.props.onEnvChange}
                                      environments={this.props.environments}
                                      selectedEnv={this.props.selectedEnv}/>
