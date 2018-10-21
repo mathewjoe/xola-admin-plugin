@@ -1,0 +1,58 @@
+.booking-generator {
+    max-height: 360px;
+    overflow-y: auto;
+    width: 500px;
+    padding: 10px;
+}
+
+.booking-generator .gen-page-wrapper {
+    height: 340px;
+    width: 450px;
+}
+
+.booking-generator .gen-page-wrapper .content {
+    height: 300px;
+    padding-bottom: 10px;
+    overflow-y: auto;
+}
+
+.booking-generator .gen-page-wrapper .content .text-div {
+    text-align: center;
+    padding: 10%;
+    margin-top: 10%;
+}
+
+.booking-generator .gen-page-wrapper .content .text-div .highlighted {
+    font-weight: bold;
+}
+
+.booking-generator .gen-page-wrapper .options-div {
+    height: 50px;
+    display: flex;
+}
+
+.booking-generator .gen-page-wrapper .options-div .action {
+    width: 50%;
+    margin:  auto;
+    display: flex;
+}
+
+.booking-generator .gen-page-wrapper .options-div .decline .single-button {
+    width: 100%;
+}
+
+.booking-generator .gen-page-wrapper .options-div .decline {
+    padding-left: 18%;
+    padding-right: 25%;
+}
+
+.booking-generator .gen-page-wrapper .options-div .accept .chip {
+    background-color: #6db136;
+    color: white;
+    margin: auto;
+}
+
+.booking-generator .gen-page-wrapper .options-div .decline .chip {
+    background-color: #ee5f5b;
+    color: white;
+}
