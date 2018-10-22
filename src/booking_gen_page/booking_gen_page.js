@@ -340,14 +340,6 @@ class BookingGeneratorPage extends Component  {
           </div>
 
           <div class="options-div">
-            <div class="decline action">
-              <Link to="/search">
-                <a href='#' className="chip">CLOSE</a>
-              </Link>
-            </div>
-            <div class="accept action">
-              <a href='#' className="chip" onClick={()=> {this.showVerification()}}>Continue</a>
-            </div>
           </div>
 
         </div>
@@ -361,7 +353,7 @@ class BookingGeneratorPage extends Component  {
           <div class="content">
             <div class="text-div">
               Please ensure that you have selected the right&nbsp;
-              <span class="highlighted">Environment</span>&nbsp; and&nbsp;
+              <span class="highlighted">Environment</span>&nbsp;and&nbsp;
               <span class="highlighted">Seller</span><br/>
               You will be given a chance to verify these values on the next screen.<br/>
             </div>
@@ -419,9 +411,9 @@ class BookingGeneratorPage extends Component  {
 
           <div class="content">
             <div class="text-div">
-              Making bookings take time.<br/>
-              A little patience goes a long way.<br/>
-              Please await your confirmation.
+              Your bookings are being prepared<br/>
+              You may await confirmation<br/>or<br/>
+              Check back in 5 to 10 minutes to see your new orders.
             </div>
           </div>
 
