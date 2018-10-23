@@ -1,6 +1,5 @@
 import './seller_tile.css';
 import React, {Component} from 'react';
-import {Link} from 'react-router-dom';
 import {RegularIcon} from "../icon";
 import Icon from "../icon";
 import CopyField from "./copy_field";
