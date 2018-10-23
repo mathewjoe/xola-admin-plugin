@@ -1,25 +1,14 @@
-import React, {Component} from 'react';
-import {Link} from 'react-router-dom';
+class BookingGeneratorPage {
+  constructor (options) {
+    this.baseUrl = options.baseUrl;
+    this.sellerId = options.sellerId;
+    this.apiKey = options.apiKey;
 
-import _range from 'lodash/range';
-import $ from 'jquery';
-import './booking_gen_page.css';
-import faker from 'faker';
-
-class BookingGeneratorPage extends Component  {
-  constructor (props) {
-    super(props)
-
-    this.baseUrl = this.props.match.params.url.split('@').join('/');
-    this.sellerId = this.props.match.params.sellerId;
-    this.apiKey = this.props.match.params.apiKey;
-
-    const promises = [this.setAdminEmail(), this.setSellerName()];
+    this.setAdminEmail();
+    this.setSellerName();
 
     this.startDate = this.getTomorrow();
     this.endDate = this.get30DaysFromTomorrow();
-    this.showPrepMessage();
-    Promise.all(promises).then(() => { this.showUnderstanding(); })
   };
 
   async setAdminEmail() {
@@ -79,7 +68,9 @@ class BookingGeneratorPage extends Component  {
     max = (orderMax && (orderMax <= max)) ? orderMax : max;
 
     const min = (orderMin && (orderMin > 1)) ? orderMin : 1;
-    const options = _range(min, (max + 1));
+    max = (min * 5) > max ? max : (min * 4);
+
+    const options = _.range(min, (max + 1));
     return options.length === 0 ? 0 : options[Math.floor(Math.random()*options.length)];
   };
 
@@ -139,6 +130,9 @@ class BookingGeneratorPage extends Component  {
     const orderMax = experience.group.orderMax || null;
     const outingMax = experience.group.outingMax || null;
     const quantity = this.getQuantity(availability, orderMin, orderMax, outingMax);
+    if (!quantity) {
+      return null;
+    }
     const demographics = this.getDemographicsJsonForQuantity(availableDemographics, quantity);
 
     const payloadItem = {};
@@ -179,7 +173,7 @@ class BookingGeneratorPage extends Component  {
         if (Array.isArray(arrivalDates[date])) {
           trip.availability = arrivalDates[date][0];
           if (trip.availability) {
-            viableTrips.push(trip);
+            viableTrips.push($.extend(true, {}, trip));
           }
         } else {
           const arrivalTimes = arrivalDates[date];
@@ -187,7 +181,7 @@ class BookingGeneratorPage extends Component  {
             trip.arrivalTime = arrivalTime;
             trip.availability = arrivalTimes[arrivalTime];
             if (trip.availability) {
-              viableTrips.push(trip);
+              viableTrips.push($.extend(true, {}, trip));
             }
           }
         }
@@ -232,6 +226,7 @@ class BookingGeneratorPage extends Component  {
     orderPayload.customerName = faker.name.findName();
     orderPayload.customerEmail = this.getCustomEmail();
     orderPayload.payment = { "method": "later" };
+
     if (!orderPayload.tags) {
       orderPayload.tags = [];
     }
@@ -245,23 +240,30 @@ class BookingGeneratorPage extends Component  {
       "X-API-KEY": this.apiKey
     };
 
-    const response = await $.ajax({
+    return await $.ajax({
       url: url,
       type: "POST",
       headers: headers,
       contentType: 'application/json',
       data: JSON.stringify(payload)
     });
-
-    return response.id;
   };
 
   async bookATrip(trip) {
-    const experience = await this.getExperience(trip.experience.id);
-    const prepareOrderPayload = this.getOrderPreparePayload(experience, trip.availability, trip.arrival, trip.arrivalTime);
-    let orderPayload = await this.prepareOrder(prepareOrderPayload);
-    orderPayload = this.addCustomerDetailsToOrderPayload(orderPayload);
-    await this.createOrder(orderPayload);
+    try {
+      const experience = await this.getExperience(trip.experience.id);
+      const prepareOrderPayload = this.getOrderPreparePayload(experience, trip.availability, trip.arrival, trip.arrivalTime);
+      if(!prepareOrderPayload) {
+        return -1;
+      }
+      let orderPayload = await this.prepareOrder(prepareOrderPayload);
+      orderPayload = this.addCustomerDetailsToOrderPayload(orderPayload);
+      const order = await this.createOrder(orderPayload);
+
+      return order.id;
+    }catch (e) {
+      return -1;
+    }
   };
 
   async bookAtmost50Trips() {
@@ -273,196 +275,41 @@ class BookingGeneratorPage extends Component  {
     if (!possibleTrips) {
       return "No bookings were made (0 seats available for the next 30 days)";
     }
-    const chosenTrips = this.chooseUpto50Trips(possibleTrips)
-    const promises = chosenTrips.forEach((trip) => {
-      return this.bookATrip(trip)
-    });
+    const chosenTrips = this.chooseUpto50Trips(possibleTrips);
 
-    return Promise.all(promises).then((values) => {
-      return `All done, you should find ${chosenTrips.length} new bookings ${values}`;
-    });
-  };
-
-  generateBookings() {
-    this.bookAtmost50Trips().then((message) => {
-      $('.one-piece .content .text-div .message').innerText = message;
-      this.showReward();
-    });
-  };
-
-  hideAllPages(render=true) {
-    if (render) {
-      this.render();
+    const values = [];
+    for (const index in chosenTrips) {
+      values.push(await this.bookATrip(chosenTrips[index]));
     }
-    $('.preping-the-generator').hide();
-    $('.statement-of-understanding').hide();
-    $('.guard-of-verification').hide();
-    $('.patience-of-the-wise').hide();
-    $('.one-piece').hide();
+
+    const numOrdersCreated = values.filter(orderId => orderId.length > 1).length;
+    return `${numOrdersCreated} orders created`;
   };
 
-  showPrepMessage() {
-    this.hideAllPages();
-    $('.preping-the-generator').show();
-  };
+  reimpersonate() {
+    const apiKey = window.app.getApiKey();
+    window.location = `${document.location.origin}/seller#seller=${window.seller.id}#apiKey=${apiKey}`;
+    window.location.reload();
+  }
 
-  showUnderstanding() {
-    this.hideAllPages();
-    $('.statement-of-understanding').show();
-  };
-
-  showVerification() {
-    this.hideAllPages();
-    $('.guard-of-verification').show();
-  };
-
-  showPatience() {
-    this.hideAllPages();
-    $('.patience-of-the-wise').show();
-    this.generateBookings();
-  };
-
-  showReward() {
-    this.hideAllPages(false);  // We don't want to clear out the values we just set
-    $('.one-piece').show();
-  };
-
-  render() {
-    const prepSection = (
-      <div class="preping-the-generator">
-        <div class="gen-page-wrapper">
-
-          <div class="content">
-            <div class="text-div">
-              Prep-ing the generator...<br/>
-              Please stand by
-            </div>
-          </div>
-
-          <div class="options-div">
-          </div>
-
-        </div>
-      </div>
-    );
-
-    const statementOfUnderstandingSection = (
-      <div class="statement-of-understanding">
-        <div class="gen-page-wrapper">
-
-          <div class="content">
-            <div class="text-div">
-              Please ensure that you have selected the right&nbsp;
-              <span class="highlighted">Environment</span>&nbsp;and&nbsp;
-              <span class="highlighted">Seller</span><br/>
-              You will be given a chance to verify these values on the next screen.<br/>
-            </div>
-          </div>
-
-          <div class="options-div">
-            <div class="decline action">
-              <Link to="/search">
-                <a href='#' className="chip">CLOSE</a>
-              </Link>
-            </div>
-            <div class="accept action">
-              <a href='#' className="chip" onClick={()=> {this.showVerification()}}>Continue</a>
-            </div>
-          </div>
-
-        </div>
-      </div>
-    );
-
-    const verificationSection = (
-      <div class="guard-of-verification">
-        <div class="gen-page-wrapper">
-
-          <div class="content">
-            <div class="text-div">
-              You are attempting to make upto 50 bookings<br/>
-              With user&nbsp;
-              <span class="highlighted">{this.adminEmail}</span><br/>
-              On the environment with url&nbsp;
-              <span class="highlighted">{this.baseUrl}</span><br/>
-              For &nbsp;
-              <span class="highlighted">{this.sellerName}</span>
-            </div>
-          </div>
-
-          <div class="options-div">
-            <div class="decline action">
-              <Link to="/search">
-                <a href='#' className="chip">NO</a>
-              </Link>
-            </div>
-            <div class="accept action">
-              <a href='#' className="chip" onClick={()=> {this.showPatience();}}>YES</a>
-            </div>
-          </div>
-
-        </div>
-      </div>
-    );
-
-    const patienceSection = (
-      <div class="patience-of-the-wise">
-        <div class="gen-page-wrapper">
-
-          <div class="content">
-            <div class="text-div">
-              Your bookings are being prepared<br/>
-              You may await confirmation<br/>or<br/>
-              Check back in 5 to 10 minutes to see your new orders.
-            </div>
-          </div>
-
-          <div class="options-div">
-            <div class="decline single-button action">
-              <Link to="/search">
-                <a href='#' className="chip">CLOSE</a>
-              </Link>
-            </div>
-          </div>
-
-        </div>
-      </div>
-    );
-
-    const rewardSection = (
-      <div class="one-piece reward">
-        <div class="gen-page-wrapper">
-
-          <div class="content">
-            <div class="text-div">
-              <span class="message"></span>
-            </div>
-          </div>
-
-          <div class="options-div">
-            <div class="decline single-button action">
-              <Link to="/search">
-                <a href='#' className="chip">CLOSE</a>
-              </Link>
-            </div>
-          </div>
-
-        </div>
-      </div>
-    );
-
-    return (
-      <div className="booking-generator container">
-        <div className="container">
-          { prepSection }
-          { statementOfUnderstandingSection }
-          { verificationSection }
-          { patienceSection }
-          { rewardSection }
-        </div>
-      </div>
-    );
+  async run() {
+    const message = await this.bookAtmost50Trips();
+    alert(message + "\n\n Reimpersonating now");
+    this.reimpersonate();
   }
 }
 
-export {BookingGeneratorPage};
+const generateBookings = () => {
+  if (window.app && window.seller) {
+    const options = {
+      baseUrl: document.location.origin,
+      apiKey: window.user.get('apiKey'),
+      sellerId: window.seller.id
+    };
+    let demoBookingGeneratorInChromeExt = new BookingGeneratorPage(options);
+    demoBookingGeneratorInChromeExt.run();
+  }
+}
+
+generateBookings();
+

@@ -35,6 +35,7 @@
     "persistent": false
   },
   "web_accessible_resources": [
-    "content_scripts/reimpersonate.js"
+    "content_scripts/reimpersonate.js",
+    "content_scripts/booking_generator.js"
   ]
 }
