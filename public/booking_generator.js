@@ -286,30 +286,14 @@ class BookingGeneratorPage {
     return `${numOrdersCreated} orders created`;
   };
 
-  reimpersonate() {
-    const apiKey = window.app.getApiKey();
-    window.location = `${document.location.origin}/seller#seller=${window.seller.id}#apiKey=${apiKey}`;
-    window.location.reload();
-  }
-
   async run() {
     const message = await this.bookAtmost50Trips();
-    alert(message + "\n\n Reimpersonating now");
-    this.reimpersonate();
+    alert(message + "\n\n Reimpersonate to see your new bookings");
   }
 }
-
-const generateBookings = () => {
-  if (window.app && window.seller) {
-    const options = {
-      baseUrl: document.location.origin,
-      apiKey: window.user.get('apiKey'),
-      sellerId: window.seller.id
-    };
-    let demoBookingGeneratorInChromeExt = new BookingGeneratorPage(options);
-    demoBookingGeneratorInChromeExt.run();
-  }
-}
-
-generateBookings();
-
+chrome.runtime.onMessage.addListener(function(request, sender, reply) {
+    if (request.action === "backgroundDemoBookingGenerator") {
+      let demoBookingGeneratorInChromeExt = new BookingGeneratorPage(request);
+      demoBookingGeneratorInChromeExt.run();
+    }
+});
