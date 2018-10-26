@@ -3,6 +3,9 @@ class BookingGeneratorPage {
     this.baseUrl = options.baseUrl;
     this.sellerId = options.sellerId;
     this.apiKey = options.apiKey;
+    this.defaultHeaders = {
+      'X-API-VERSION': '2018-10-01'
+    };
 
     this.setAdminEmail();
     this.setSellerName();
@@ -13,9 +16,8 @@ class BookingGeneratorPage {
 
   async setAdminEmail() {
     const url = `${this.baseUrl}/api/users/me`;
-    const headers = {
-      "X-API-KEY": this.apiKey
-    };
+    const headers = this.defaultHeaders;
+    headers['X-API-KEY'] = this.apiKey;
 
     const response = await $.ajax({
       url: url,
@@ -28,9 +30,8 @@ class BookingGeneratorPage {
 
   async setSellerName() {
     const url = `${this.baseUrl}/api/sellers/${this.sellerId}`;
-    const headers = {
-      "X-API-KEY": this.apiKey
-    };
+    const headers = this.defaultHeaders;
+    headers['X-API-KEY'] = this.apiKey;
 
     const response = await $.ajax({
       url: url,
@@ -194,9 +195,9 @@ class BookingGeneratorPage {
     const startDateStr = this.getDateStringFromDate(this.startDate);
     const endDateStr = this.getDateStringFromDate(this.endDate);
     const url = `${this.baseUrl}/api/availability?seller=${this.sellerId}&start=${startDateStr}&end=${endDateStr}`;
-    const headers = {
-      "X-API-KEY": this.apiKey
-    };
+    const headers = this.defaultHeaders;
+    headers['X-API-KEY'] = this.apiKey;
+
     const allExperiences = await $.ajax({
       url: url,
       type: "GET",
@@ -204,7 +205,7 @@ class BookingGeneratorPage {
     });
 
     const availableExperiences = [];
-    for(var experience in allExperiences) {
+    for(let experience in allExperiences) {
       if (! Array.isArray(allExperiences[experience])) {
         const experienceAvailability = {};
         experienceAvailability.id = experience;
@@ -236,9 +237,8 @@ class BookingGeneratorPage {
 
   async createOrder(payload) {
     const url = `${this.baseUrl}/api/orders`;
-    const headers = {
-      "X-API-KEY": this.apiKey
-    };
+    const headers = this.defaultHeaders;
+    headers['X-API-KEY'] = this.apiKey;
 
     return await $.ajax({
       url: url,
