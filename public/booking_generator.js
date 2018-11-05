@@ -5,6 +5,7 @@ class BookingGenerator {
     this.apiKey = options.apiKey;
     this.requiredCount = options.requiredCount || 5;
     this.requiredCount = Math.min(this.requiredCount, 100);
+    this.bookingQueueConcurrency = 10;
     this.defaultHeaders = {
       'X-API-VERSION': '2018-10-01'
     };
@@ -269,42 +270,44 @@ class BookingGenerator {
     try {
       const experience = await this.getExperience(trip.experience.id);
       const prepareOrderPayload = this.getOrderPreparePayload(experience, trip.availability, trip.arrival, trip.arrivalTime);
-      if(!prepareOrderPayload) {
-        return -1;
+      if (!prepareOrderPayload) {
+        return;
       }
       let orderPayload = await this.prepareOrder(prepareOrderPayload);
       orderPayload = this.addCustomerDetailsToOrderPayload(orderPayload);
       const order = await this.createOrder(orderPayload);
-
       return order.id;
     } catch (e) {
-      return -1;
+
     }
   };
 
   async generateBookings() {
     const availableExperiences = await this.getAllExperiencesWithAvailabilityIn30Days();
     if (!availableExperiences) {
-      return "No bookings were made (0 slots found for the next 30 days)";
+      alert("No bookings generated (0 slots found for the next 30 days)");
     }
     const possibleTrips = this.getAllViableTrips(availableExperiences);
     if (!possibleTrips) {
-      return "No bookings were made (0 seats available for the next 30 days)";
+      alert("No bookings generated (0 seats available for the next 30 days)");
     }
     const chosenTrips = _.sampleSize(possibleTrips, this.requiredCount);
 
-    const values = [];
-    for (const index in chosenTrips) {
-      values.push(await this.bookATrip(chosenTrips[index]));
-    }
-
-    const numOrdersCreated = values.filter(orderId => orderId !== -1).length;
-    return `${numOrdersCreated} orders created`;
+    let createdCount = 0;
+    const queue = async.queue(async (trip) => {
+      let orderId = await this.bookATrip(trip);
+      if (orderId) {
+        createdCount++;
+      }
+    }, this.bookingQueueConcurrency);
+    queue.drain = () => {
+      alert(`${createdCount} bookings generated.\n\nPlease re-impersonate to see your new bookings.`);
+    };
+    queue.push(chosenTrips);
   };
 
   async run() {
-    const message = await this.generateBookings();
-    alert(message + "\n\n Reimpersonate to see your new bookings");
+    await this.generateBookings();
   }
 }
 chrome.runtime.onMessage.addListener(function(request, sender, reply) {

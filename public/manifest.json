@@ -30,6 +30,7 @@
   ],
   "background": {
     "scripts": [
+      "vendor/async.min.js",
       "vendor/jQuery.js",
       "vendor/lodash.js",
       "vendor/faker.js",
