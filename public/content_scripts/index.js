@@ -8,39 +8,28 @@
     (document.head || document.documentElement).appendChild(reimporsonateEl)
   }
 
-  function __bookingGenerator () {
-    setTimeout(function () {
-      const messengerDivEl = document.getElementById('demo-booking-generator')
-      chrome.extension.sendMessage({
-        action: 'backgroundDemoBookingGenerator',
-        baseUrl: messengerDivEl.getAttribute('baseUrl'),
-        apiKey: messengerDivEl.getAttribute('apiKey'),
-        sellerId: messengerDivEl.getAttribute('sellerId')
-      })
-    }, 1000)
-  }
-
   chrome.runtime.onMessage.addListener(function (request, sender, sendResponse) {
     switch (request.action) {
       case 'reimpersonate':
         __reimpersonate()
         break
-      case 'generateDemoBooking':
-        let isOnXola = /^https:\/\/xola.com/.test(document.location.origin)
-        let isOnC02 = /^https:\/\/c02.xola.com/.test(document.location.origin)
-        let isOnStable = /^https:\/\/c01.xola.com/.test(document.location.origin)
-        let isOnSilent = /^https:\/\/silent.xola.com/.test(document.location.origin)
-        let isOnDirect = /^https:\/\/direct.xola.com/.test(document.location.origin)
-        if (!(isOnXola || isOnC02 || isOnStable || isOnSilent || isOnDirect)) {
-          (document.head || document.documentElement).appendChild(bookingGeneratorInjectorEl)
-          if (confirm('You are about to generate demo bookings?')) {
-            __bookingGenerator()
-          }
-        } else {
-          alert('Demo bookings cannot be made on production')
+      case 'generateBookings':
+        (document.head || document.documentElement).appendChild(bookingGeneratorInjectorEl)
+
+        let message = "How many bookings do you want to generate? (Max: 100) \n\nNote: The actual number of bookings generated could be lower than this number because of lack of availability, API errors etc..\n"
+        let requiredCount = prompt(message, '50');
+        if (requiredCount) {
+          setTimeout(function () {
+            const messengerDivEl = document.getElementById('demo-booking-generator')
+            chrome.extension.sendMessage({
+              action: 'backgroundBookingGenerator',
+              baseUrl: messengerDivEl.getAttribute('baseUrl'),
+              apiKey: messengerDivEl.getAttribute('apiKey'),
+              sellerId: messengerDivEl.getAttribute('sellerId'),
+              requiredCount: requiredCount
+            })
+          }, 1000)
         }
-        break
-      default:
         break
     }
   })

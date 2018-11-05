@@ -1,8 +1,10 @@
-class BookingGeneratorPage {
+class BookingGenerator {
   constructor (options) {
     this.baseUrl = options.baseUrl;
     this.sellerId = options.sellerId;
     this.apiKey = options.apiKey;
+    this.requiredCount = options.requiredCount || 5;
+    this.requiredCount = Math.min(this.requiredCount, 100);
     this.defaultHeaders = {
       'X-API-VERSION': '2018-10-01'
     };
@@ -152,11 +154,6 @@ class BookingGeneratorPage {
     return payload;
   };
 
-  chooseUpto50Trips(possibleTrips) {
-    const maxBookings = possibleTrips.length > 50 ? 50 : possibleTrips.length;
-    return _.sampleSize(possibleTrips, maxBookings);
-  };
-
   getAllViableTrips(availableExperiences) {
     const viableTrips = [];
     availableExperiences.forEach((experience) => {
@@ -280,21 +277,21 @@ class BookingGeneratorPage {
       const order = await this.createOrder(orderPayload);
 
       return order.id;
-    }catch (e) {
+    } catch (e) {
       return -1;
     }
   };
 
-  async bookAtmost50Trips() {
+  async generateBookings() {
     const availableExperiences = await this.getAllExperiencesWithAvailabilityIn30Days();
     if (!availableExperiences) {
-      return "No bookings were made ( 0 slots found for the next 30 days)";
+      return "No bookings were made (0 slots found for the next 30 days)";
     }
     const possibleTrips = this.getAllViableTrips(availableExperiences);
     if (!possibleTrips) {
       return "No bookings were made (0 seats available for the next 30 days)";
     }
-    const chosenTrips = this.chooseUpto50Trips(possibleTrips);
+    const chosenTrips = _.sampleSize(possibleTrips, this.requiredCount);
 
     const values = [];
     for (const index in chosenTrips) {
@@ -306,13 +303,13 @@ class BookingGeneratorPage {
   };
 
   async run() {
-    const message = await this.bookAtmost50Trips();
+    const message = await this.generateBookings();
     alert(message + "\n\n Reimpersonate to see your new bookings");
   }
 }
 chrome.runtime.onMessage.addListener(function(request, sender, reply) {
-    if (request.action === "backgroundDemoBookingGenerator") {
-      let demoBookingGeneratorInChromeExt = new BookingGeneratorPage(request);
-      demoBookingGeneratorInChromeExt.run();
+    if (request.action === "backgroundBookingGenerator") {
+      let generator = new BookingGenerator(request);
+      generator.run();
     }
 });

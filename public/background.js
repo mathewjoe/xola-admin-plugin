@@ -12,8 +12,8 @@ chrome.runtime.onInstalled.addListener(details => {
     ];
 
     chrome.contextMenus.create({
-        title: 'Generate Demo Bookings',
-        id: 'generateDemoBooking',
+        title: 'Generate Bookings',
+        id: 'generateBookings',
         documentUrlPatterns: bookingGeneratorWhitelist
     })
 })
@@ -22,8 +22,8 @@ chrome.contextMenus.onClicked.addListener(function (itemData, tab) {
     if (/xola[a-z.]*\/seller/.test(tab.url)) {
         if (itemData.menuItemId === 'reimpersonate') {
             chrome.tabs.sendMessage(tab.id, {action: 'reimpersonate'})
-        } else if (itemData.menuItemId === 'generateDemoBooking') {
-            chrome.tabs.sendMessage(tab.id, {action: 'generateDemoBooking'})
+        } else if (itemData.menuItemId === 'generateBookings') {
+            chrome.tabs.sendMessage(tab.id, {action: 'generateBookings'})
         }
     }
 })
