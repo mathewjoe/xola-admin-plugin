@@ -68,20 +68,20 @@ class BookingGeneratorPage {
     max = (outingMax && (outingMax <= max)) ? outingMax : max;
     max = (orderMax && (orderMax <= max)) ? orderMax : max;
 
-    const min = (orderMin && (orderMin > 1)) ? orderMin : 1;
-    max = (min * 5) > max ? max : (min * 4);
+    const min = orderMin || 1;
+    max = Math.min(max, (min * 4));
 
     const options = _.range(min, (max + 1));
     return options.length === 0 ? 0 : options[Math.floor(Math.random()*options.length)];
   };
 
   getDemographicJson(demographicId, quantity) {
-    const demographic = {};
-    demographic.demographic = {};
-    demographic.demographic.id = demographicId;
-    demographic.quantity = quantity;
-
-    return demographic;
+    return {
+      "demographic" : {
+        "id": demographicId
+      },
+      "quantity": quantity
+    };
   };
 
   getDemographicsJsonForQuantity(availableDemographics, quantity) {
@@ -153,14 +153,8 @@ class BookingGeneratorPage {
   };
 
   chooseUpto50Trips(possibleTrips) {
-    const chosenTrips = [];
     const maxBookings = possibleTrips.length > 50 ? 50 : possibleTrips.length;
-    for (let i = maxBookings-1; i>=0; i--) {
-      chosenTrips.push(
-        possibleTrips.splice(Math.floor(Math.random() * possibleTrips.length), 1)[0]
-      );
-    }
-    return chosenTrips;
+    return _.sampleSize(possibleTrips, maxBookings);
   };
 
   getAllViableTrips(availableExperiences) {
@@ -282,7 +276,7 @@ class BookingGeneratorPage {
       values.push(await this.bookATrip(chosenTrips[index]));
     }
 
-    const numOrdersCreated = values.filter(orderId => orderId.length > 1).length;
+    const numOrdersCreated = values.filter(orderId => orderId != -1).length;
     return `${numOrdersCreated} orders created`;
   };
 
