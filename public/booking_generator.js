@@ -220,8 +220,33 @@ class BookingGeneratorPage {
   addCustomerDetailsToOrderPayload(orderPayload) {
     orderPayload.customerName = faker.name.findName();
     orderPayload.customerEmail = this.getCustomEmail();
-    orderPayload.payment = { "method": "later" };
-
+    const cards = [
+      "4242424242424242",
+      "4000056655665556",
+      "5555555555554444",
+      "2223003122003222",
+      "5200828282828210",
+      "5105105105105100",
+      "378282246310005",
+      "371449635398431",
+      "6011111111111117",
+      "6011000990139424",
+      "30569309025904",
+      "38520000023237",
+      "3566002020360505",
+      "6200000000000005"
+    ];
+    orderPayload.payment = {
+      "card": {
+        "number": cards[Math.floor(Math.random()*cards.length)],
+        "cvv":"123",
+        "billingName": orderPayload.customerName,
+        "expiryMonth":"12",
+        "expiryYear":((new Date()).getFullYear() + 4).toString(),
+        "billingPostcode":"00000"
+      },
+      "method":"cc"
+    };
     if (!orderPayload.tags) {
       orderPayload.tags = [];
     }
@@ -276,7 +301,7 @@ class BookingGeneratorPage {
       values.push(await this.bookATrip(chosenTrips[index]));
     }
 
-    const numOrdersCreated = values.filter(orderId => orderId != -1).length;
+    const numOrdersCreated = values.filter(orderId => orderId !== -1).length;
     return `${numOrdersCreated} orders created`;
   };
 
