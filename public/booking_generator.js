@@ -6,42 +6,22 @@ class BookingGenerator {
     this.requiredCount = options.requiredCount || 5;
     this.requiredCount = Math.min(this.requiredCount, 100);
     this.bookingQueueConcurrency = 10;
-    this.defaultHeaders = {
-      'X-API-VERSION': '2018-10-01'
-    };
+    $.ajaxSetup({
+        headers: {
+            'X-API-VERSION': '2018-10-01',
+            'X-API-KEY': this.apiKey
+        }
+    });
 
     this.setAdminEmail();
-    this.setSellerName();
 
     this.startDate = this.getTomorrow();
     this.endDate = this.get30DaysFromTomorrow();
   };
 
   async setAdminEmail() {
-    const url = `${this.baseUrl}/api/users/me`;
-    const headers = this.defaultHeaders;
-    headers['X-API-KEY'] = this.apiKey;
-
-    const response = await $.ajax({
-      url: url,
-      type: "GET",
-      headers: headers
-    });
-
+    const response = await $.ajax(`${this.baseUrl}/api/users/me`);
     this.adminEmail = response.email;
-  }
-
-  async setSellerName() {
-    const url = `${this.baseUrl}/api/sellers/${this.sellerId}`;
-    const headers = this.defaultHeaders;
-    headers['X-API-KEY'] = this.apiKey;
-
-    const response = await $.ajax({
-      url: url,
-      type: "GET",
-      headers: headers
-    });
-    this.sellerName = response.name;
   }
 
   getMillisecondsInADay() {
@@ -111,16 +91,12 @@ class BookingGenerator {
 
   async getExperience(experienceId) {
     const url = `${this.baseUrl}/api/experiences/${experienceId}`;
-
-    return await $.ajax({
-      url: url,
-      type: "GET",
-    });
+    return $.ajax(url);
   };
 
   async prepareOrder(payload) {
     const url = `${this.baseUrl}/api/orders/prepare`;
-    return await $.ajax({
+    return $.ajax({
       url: url,
       type: "POST",
       contentType: 'application/json',
@@ -186,15 +162,9 @@ class BookingGenerator {
   async getAllExperiencesWithAvailabilityIn30Days() {
     const startDateStr = this.getDateStringFromDate(this.startDate);
     const endDateStr = this.getDateStringFromDate(this.endDate);
-    const url = `${this.baseUrl}/api/availability?seller=${this.sellerId}&start=${startDateStr}&end=${endDateStr}`;
-    const headers = this.defaultHeaders;
-    headers['X-API-KEY'] = this.apiKey;
 
-    const allExperiences = await $.ajax({
-      url: url,
-      type: "GET",
-      headers: headers
-    });
+    const url = `${this.baseUrl}/api/availability?seller=${this.sellerId}&start=${startDateStr}&end=${endDateStr}`;
+    const allExperiences = await $.ajax(url);
 
     const availableExperiences = [];
     for(let experience in allExperiences) {
@@ -254,13 +224,10 @@ class BookingGenerator {
 
   async createOrder(payload) {
     const url = `${this.baseUrl}/api/orders`;
-    const headers = this.defaultHeaders;
-    headers['X-API-KEY'] = this.apiKey;
 
-    return await $.ajax({
+    return $.ajax({
       url: url,
       type: "POST",
-      headers: headers,
       contentType: 'application/json',
       data: JSON.stringify(payload)
     });
