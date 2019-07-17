@@ -32,8 +32,7 @@
     "scripts": [
       "vendor/async.min.js",
       "background.js"
-    ],
-    "persistent": false
+    ]
   },
   "web_accessible_resources": [
     "content_scripts/reimpersonate.js"
