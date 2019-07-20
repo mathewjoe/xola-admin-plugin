@@ -30,7 +30,6 @@
   ],
   "background": {
     "scripts": [
-      "vendor/async.min.js",
       "background.js"
     ]
   },
