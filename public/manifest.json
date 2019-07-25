@@ -30,17 +30,10 @@
   ],
   "background": {
     "scripts": [
-      "vendor/async.min.js",
-      "vendor/jQuery.js",
-      "vendor/lodash.js",
-      "vendor/faker.js",
-      "booking_generator.js",
       "background.js"
-    ],
-    "persistent": false
+    ]
   },
   "web_accessible_resources": [
-    "content_scripts/reimpersonate.js",
-    "content_scripts/booking_generator_injector.js"
+    "content_scripts/reimpersonate.js"
   ]
 }
