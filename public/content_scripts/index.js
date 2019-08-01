@@ -7,10 +7,8 @@
   }
 
   chrome.runtime.onMessage.addListener(function (request, sender, sendResponse) {
-    switch (request.action) {
-      case 'reimpersonate':
+    if (request.reimpersonate) {
         __reimpersonate()
-        break
     }
   })
-})()
+})();

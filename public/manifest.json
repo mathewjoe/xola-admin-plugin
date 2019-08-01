@@ -3,7 +3,7 @@
 
   "name": "Xola Admin",
   "description": "Utilities for admins of Xola",
-  "version": "1.2.1",
+  "version": "1.2.2",
   "icons": {
     "128": "icon-128.png"
   },
@@ -31,7 +31,8 @@
   "background": {
     "scripts": [
       "background.js"
-    ]
+    ],
+    "persistent": false
   },
   "web_accessible_resources": [
     "content_scripts/reimpersonate.js"
