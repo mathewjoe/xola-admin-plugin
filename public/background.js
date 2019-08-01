@@ -7,10 +7,8 @@ chrome.runtime.onInstalled.addListener(details => {
 });
 
 chrome.contextMenus.onClicked.addListener(function (itemData, tab) {
-    if (/xola[a-z.]*\/seller/.test(tab.url)) {
-        if (itemData.menuItemId === 'reimpersonate') {
-            chrome.tabs.sendMessage(tab.id, {action: 'reimpersonate'})
-        }
+    if (itemData.menuItemId === 'reimpersonate' && /xola[a-z.]*\/seller/.test(tab.url)) {
+        chrome.tabs.sendMessage(tab.id, {action: 'reimpersonate'})
     }
 });
 
