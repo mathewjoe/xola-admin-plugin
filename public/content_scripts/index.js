@@ -7,8 +7,10 @@
   }
 
   chrome.runtime.onMessage.addListener(function (request, sender, sendResponse) {
-    if (request.reimpersonate) {
-        __reimpersonate();
+    switch(request.action) {
+        case 'reimpersonate':
+            __reimpersonate();
+            break;
     }
   });
 })();
